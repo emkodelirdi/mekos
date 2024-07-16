@@ -11,7 +11,7 @@ start:
     mov     sp, 0x7C00                   ; Set stack pointer
     sti                                  ; Start interrupts
 
-    ; Call the function to read a sector from disk
+    ; Read sector from disk
     mov     al, 0x01                    ; Number of sectors to read (1 sector)
     mov     ch, 0x00                    ; Cylinder number
     mov     cl, 0x02                    ; Sector number (2, for example)
@@ -23,9 +23,10 @@ start:
     ; Check for disk read error
     jc      read_error                  ; Jump if carry flag is set (indicates error)
 
-    ; Print success message
-    mov     si, var_ReadSuccess         ; Load address of success message
-    call    print                        ; Call print function
+    ; Print the data read from disk
+    mov     si, 0x1000                  ; Address of the read data
+    call    print_data                  ; Call function to print data
+
     jmp     hang                         ; Hang if successful
 
 read_error:
@@ -50,6 +51,7 @@ read_sector:
     ret                                 ; Return from function
 
 %include "lib/print.asm"                  ; Include print function
+%include "lib/print_data.asm"             ; Include print_data function
 
 return:
     ret
